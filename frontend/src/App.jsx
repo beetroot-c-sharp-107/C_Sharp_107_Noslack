@@ -3,32 +3,43 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+import Chatbox from './Chatbox'
+
 function App() {
-  const [count, setCount] = useState(0)
+  const chats = [
+    {
+      chatId: 1,
+      title: "Messages with Illia",
+      text: "Hey! Sup you, how its going..."
+    },
+    {
+      chatId: 2,
+      title: "Messages with Yana",
+      text: "Hi! How is your homework?"
+    },
+    {
+      chatId: 3,
+      title: "Messages with Yuri",
+      text: "Hi! How is your homework?"
+    },
+    {
+      chatId: 4,
+      title: "Messages with Natali",
+      text: "Hi! How is your homework?"
+    },
+    {
+      chatId: 7,
+      title: "Messages with Zorian",
+      text: "Hi! How is your homework?"
+    }
+  ]
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="chatlist">
+      {
+        chats.map(chat => <Chatbox chatId={chat.chatId} title={chat.title} text={chat.text} />)
+      }
+    </div>
   )
 }
 
