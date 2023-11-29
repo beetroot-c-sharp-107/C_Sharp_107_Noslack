@@ -9,8 +9,8 @@ namespace backend.Models
         public DbSet<Messege> Messeges { get; set; }
         public DbSet<User> Users { get; set; }
 
-        public ChatDbContext()
-            : base()
+        public ChatDbContext(DbContextOptions<ChatDbContext> options)
+            : base(options)
         {
         }
     }
