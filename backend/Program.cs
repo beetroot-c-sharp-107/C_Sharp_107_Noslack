@@ -1,3 +1,4 @@
+using backend;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,14 @@ builder.Services.AddDbContext<ChatDbContext>((services, options) => {
     options.UseNpgsql(connectionString);
 });
 
+builder.Services
+    .AddHealthChecks()
+    .AddCheck<MyCustomHealthCheckService>(nameof(MyCustomHealthCheckService))
+    .AddNpgSql(services => {
+        var configuration = services.GetRequiredService<IConfiguration>();
+        return configuration.GetSection("ConnectionStrings:Postgres").Value;
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -30,5 +39,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHealthChecks("/health_check");
 
 app.Run();
