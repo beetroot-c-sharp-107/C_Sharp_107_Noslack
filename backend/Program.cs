@@ -1,4 +1,6 @@
+using AutoMapper;
 using backend;
+using backend.DTO.UserControllerDTO;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +17,11 @@ builder.Services.AddDbContext<ChatDbContext>((services, options) => {
     var configuration = services.GetRequiredService<IConfiguration>();
     var connectionString = configuration.GetSection("ConnectionStrings:Postgres").Value;
     options.UseNpgsql(connectionString);
+});
+
+builder.Services.AddAutoMapper(config => {
+    config.CreateMap<User, GetUserDTO>();
+    config.CreateMap<CreateUserDTO, User>();
 });
 
 builder.Services
