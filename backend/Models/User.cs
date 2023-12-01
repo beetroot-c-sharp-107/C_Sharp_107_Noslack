@@ -29,6 +29,6 @@ namespace backend.Models
 
 
         [Column("last_seen")]
-        public string Last_seen { get; set; }
+        public DateTime LastSeen { get; set; }
     }
 }

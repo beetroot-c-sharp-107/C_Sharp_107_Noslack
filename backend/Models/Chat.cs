@@ -10,18 +10,18 @@ namespace backend.Models
         public int Id { get; set; }
 
 
-        [ForeignKey(nameof(UserId_1))]
-        public User User_1 { get; set; } = new User();
+        [ForeignKey(nameof(UserId1))]
+        public User User1 { get; set; } = new User();
 
         [Column("userid_1")]
-        public int UserId_1 { get; set; }
+        public int UserId1 { get; set; }
 
 
-        [ForeignKey(nameof(UserId_2))]
-        public User User_2 { get; set; } = new User();
+        [ForeignKey(nameof(UserId2))]
+        public User User2 { get; set; } = new User();
 
         [Column("userid_2")]
-        public int UserId_2 { get; set; }
+        public int UserId2 { get; set; }
 
     }
 }

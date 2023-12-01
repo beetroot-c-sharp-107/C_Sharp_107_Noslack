@@ -19,6 +19,6 @@ namespace backend.Models
 
 
         [Column("file_path")]
-        public string File_path { get; set; }
+        public string FilePath { get; set; }
     }
 }
