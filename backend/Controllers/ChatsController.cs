@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using backend.DTO.ChatControllerDTO;
 
 
 namespace backend.Controllers;
