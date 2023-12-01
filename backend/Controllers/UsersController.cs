@@ -13,23 +13,28 @@ public class UsersController : ControllerBase
     private readonly IMapper _mapper;
     private readonly ILogger<UsersController> _logger;
 
+    private readonly IWebHostEnvironment _hostingEnvironment;
+
     private readonly AppDbContext _appDbContext;
 
-    public UsersController(IMapper mapper, AppDbContext appDbContext, ILogger<UsersController> logger)
+    public UsersController(IWebHostEnvironment hostingEnvironment, IMapper mapper, AppDbContext appDbContext, ILogger<UsersController> logger)
     {
         _mapper = mapper;
         _logger = logger;
         _appDbContext = appDbContext;
+        _hostingEnvironment = hostingEnvironment;
     }
 
     [HttpGet("")]
     [ProducesResponseType(typeof(UserDTO[]), StatusCodes.Status200OK)]
     public async Task<IActionResult> AllAsync([FromQuery] int start = 0, [FromQuery] int count = 10, CancellationToken cancellationToken = default)
     {
-        var all = await _appDbContext.Users.ToListAsync(cancellationToken);
+        var all = await _appDbContext.Users
+        .Skip(start)
+        .Take(count)
+        .ToListAsync(cancellationToken);
+
         return Ok(all
-            .Skip(start)
-            .Take(count)
             .Select(
                 c => _mapper.Map<User, UserDTO>(c)
             )
@@ -55,14 +60,22 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAvatarAsync([FromRoute] int id, CancellationToken cancellationToken)
     {
-        var avatar = await _appDbContext.Contacts
-            .Include(c => c.Avatar)
-            .SingleAsync(c => c.Id == id, cancellationToken);
-
-        if (avatar.Id is null || avatar.UserId is null)
+        //I'm kinda still not sure if we'll be storing images locally for server
+        var imageGuid = await _appDbContext.Users
+            .Include(c => c.Avatars)
+            .SingleAsync(cancellationToken => c.UserId == id, cancellationToken);
+        //If I've got it right, it should construct a path to the image but maybe we'll need to store image format in db
+        string path = Path.Combine(_hostingEnvironment.WebRootPath, "Images/") + imageGuid.FileGuid;
+        byte[] imageBytes;
+        try
+        {
+             imageBytes = System.IO.File.ReadAllBytes(path);
+        }
+        catch
         {
             return NotFound(id);
         }
-        return File(avatar.ImageData, avatar.ImageType); // review Data Models later
+        //Not sure how to return content type here
+        return File(imageBytes, "image/png"); // review Data Models later
     }
 }
