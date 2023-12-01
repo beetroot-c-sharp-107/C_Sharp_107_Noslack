@@ -11,11 +11,11 @@ namespace backend.Controllers;
 [Route("api/[controller]")]
 public class ChatsController : ControllerBase
 {
-    private readonly ILogger<WeatherForecastController> _logger;
+    private readonly ILogger<ChatsController> _logger;
     private readonly ChatDbContext _chatDbContext;
     private readonly IMapper _mapper;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, ChatDbContext chatDbContext, IMapper mapper)
+    public ChatsController(ILogger<ChatsController> logger, ChatDbContext chatDbContext, IMapper mapper)
     {
         _logger = logger;
         _chatDbContext = chatDbContext;
