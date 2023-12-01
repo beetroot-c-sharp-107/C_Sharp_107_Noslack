@@ -4,7 +4,7 @@ using System.Diagnostics.Metrics;
 
 namespace backend.Models
 {
-    public class Massege
+    public class Message
     {
         [Key]
         [Column("id")]
@@ -18,8 +18,8 @@ namespace backend.Models
         public int? ChatId { get; set; }
 
 
-        [Column("messege")]
-        public string Messege { get; set; }
+        [Column("message")]
+        public string MessageText { get; set; }
 
 
         [ForeignKey(nameof(UserId))]
@@ -29,7 +29,7 @@ namespace backend.Models
         public int? UserId { get; set; }
 
         [Column("sent_date")]
-        public DateTime SentDate { get; set; }
+        public DateTimeOffset SentDate { get; set; }
 
     }
 }

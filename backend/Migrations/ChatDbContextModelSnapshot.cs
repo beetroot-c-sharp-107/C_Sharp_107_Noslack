@@ -44,7 +44,7 @@ namespace backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Avatars");
+                    b.ToTable("Avatars", (string)null);
                 });
 
             modelBuilder.Entity("backend.Models.Chat", b =>
@@ -69,7 +69,7 @@ namespace backend.Migrations
 
                     b.HasIndex("UserId_2");
 
-                    b.ToTable("Chats");
+                    b.ToTable("Chats", (string)null);
                 });
 
             modelBuilder.Entity("backend.Models.Messege", b =>
@@ -105,7 +105,7 @@ namespace backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Messeges");
+                    b.ToTable("Messeges", (string)null);
                 });
 
             modelBuilder.Entity("backend.Models.User", b =>
@@ -141,7 +141,7 @@ namespace backend.Migrations
 
                     b.HasIndex("AvatarId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("backend.Models.Avatar", b =>

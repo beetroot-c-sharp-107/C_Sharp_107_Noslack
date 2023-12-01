@@ -29,6 +29,6 @@ namespace backend.Models
 
 
         [Column("last_seen")]
-        public DateTime LastSeen { get; set; }
+        public DateTimeOffset LastSeen { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace backend.Models
         public int? UserId { get; set; }
 
 
-        [Column("file_path")]
-        public string FilePath { get; set; }
+        [Column("file_guid")]
+        public Guid FileGuid { get; set; }
     }
 }
