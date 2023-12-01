@@ -1,5 +1,6 @@
 using AutoMapper;
 using backend.DTO.UserControllerDTO;
+using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
