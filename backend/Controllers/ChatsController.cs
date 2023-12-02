@@ -30,6 +30,8 @@ public class ChatsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(GetChatDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ChatById([FromRoute] int id, CancellationToken cancellationToken)
     {
         var chat = await _chatDbContext.Chats.FindAsync(id, cancellationToken);
@@ -50,6 +52,8 @@ public class ChatsController : ControllerBase
     }
 
     [HttpGet("{id}/messages")]
+    [ProducesResponseType(typeof(MessageDTO[]), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMessagesById([FromRoute] int id, [FromQuery] int start = 0, [FromQuery] int count = 10, CancellationToken cancellationToken = default)
     {
         var chat = await _chatDbContext.Chats.FindAsync(id, cancellationToken);
