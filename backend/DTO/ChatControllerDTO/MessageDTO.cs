@@ -1,6 +1,7 @@
 ﻿using System;
 
-namespace backend.DTO.ChatControllerDTO
+namespace backend.DTO.ChatControllerDTO;
+
 public class MessageDTO
 {
     public int Id { get; set; }
