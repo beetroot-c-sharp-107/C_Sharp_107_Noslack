@@ -22,10 +22,10 @@ builder.Services.AddDbContext<ChatDbContext>((services, options) => {
 builder.Services.AddAutoMapper(config => {
     config.CreateMap<User, GetUserDTO>();
     config.CreateMap<CreateUserDTO, User>();
-    config.CreateMap<Chat, ChatDTO>();
-    config.CreateMap<ChatDTO, Chat>();
-    config.CreateMap<Message, MessageDTO>();
-    config.CreateMap<MessageDTO, Message>();
+    // config.CreateMap<Chat, ChatDTO>();
+    // config.CreateMap<ChatDTO, Chat>();
+    // config.CreateMap<Message, MessageDTO>();
+    // config.CreateMap<MessageDTO, Message>();
 });
 
 builder.Services
@@ -44,6 +44,30 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<GetCurrentUserMiddleware>();
+
+app.Use(async (request, next) => {
+    var loggerFactory = request.RequestServices.GetRequiredService<ILoggerFactory>();
+    var logger = loggerFactory.CreateLogger("ExceptionMiddleware");
+
+    try
+    {
+        await next();
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Unhandled exception");
+
+        request.Response.StatusCode = 500;
+        await request.Response.WriteAsJsonAsync(
+            new GenericErrorDTO {
+                ErrorMessage = ex.Message,
+                ErrorType = app.Environment.IsDevelopment() ? ex.GetType().Name : null,
+                RequestID = app.Environment.IsDevelopment() ? request.Request.HttpContext.TraceIdentifier : null,
+            });
+    }
+});
 
 app.UseHttpsRedirection();
 

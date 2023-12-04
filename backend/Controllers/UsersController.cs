@@ -34,9 +34,7 @@ public class UsersController : ControllerBase
         .ToListAsync(cancellationToken);
 
         return Ok(all
-            .Select(
-                c => _mapper.Map<User, GetUserDTO>(c)
-            )
+            .Select(_mapper.Map<User, GetUserDTO>)
             .ToArray() //Try ToList later
         );
     }
