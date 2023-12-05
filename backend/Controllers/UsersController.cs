@@ -53,4 +53,47 @@ public class UsersController : ControllerBase
         }
         return Ok(_mapper.Map<User, GetUserDTO>(contact));
     }
+
+    [HttpPost("")]
+    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateAsync([FromForm] CreateUserDTO userDTO, CancellationToken cancellationToken)
+    {
+        Guid avatarGuid;
+        int? avatarId = null;
+        if(userDTO.AvatarFile is not null)
+        {
+            avatarGuid = await AddAvatarAsync(userDTO.AvatarFile, cancellationToken);
+            var avatar = _appDbContext.Avatars
+                        .Where(av => av.FileGuid == avatarGuid)
+                        .First();
+            avatarId = avatar.Id;
+        }
+
+        
+        var contact = _mapper.Map<CreateUserDTO, User>(userDTO);
+        contact.AvatarId = avatarId;
+
+        var createdUser = await _appDbContext.Users.AddAsync(contact);
+        await _appDbContext.SaveChangesAsync(cancellationToken);
+        
+        return Ok(createdUser.Entity.Id);
+    }
+    //Not sure where this method should be
+    private async Task<Guid> AddAvatarAsync(IFormFile avatarFile, CancellationToken cancellationToken)
+    {
+        Guid avatarGuid = new Guid();
+        var avatarEntity = await _appDbContext.Avatars.AddAsync(new Avatar
+        {
+            FileGuid = avatarGuid
+        }, cancellationToken);
+
+        string filepath = Path.Combine("~/images", avatarGuid.ToString());
+        using(var stream = System.IO.File.Create(filepath))
+        {
+            await avatarFile.CopyToAsync(stream);
+        }
+        await _appDbContext.SaveChangesAsync(cancellationToken);
+
+        return avatarEntity.Entity.FileGuid;
+    }
 }
