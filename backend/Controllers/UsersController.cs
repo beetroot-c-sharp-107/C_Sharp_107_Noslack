@@ -86,8 +86,12 @@ public class UsersController : ControllerBase
         {
             FileGuid = avatarGuid
         }, cancellationToken);
-
-        string filepath = Path.Combine("~/images", avatarGuid.ToString());
+        string webrootImages = Path.Combine("~", "images");
+        if(!Directory.Exists(webrootImages))
+        {
+            Directory.CreateDirectory(webrootImages);
+        }
+        string filepath = Path.Combine(webrootImages, avatarGuid.ToString());
         using(var stream = System.IO.File.Create(filepath))
         {
             await avatarFile.CopyToAsync(stream);
