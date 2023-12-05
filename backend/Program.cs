@@ -22,10 +22,10 @@ builder.Services.AddDbContext<ChatDbContext>((services, options) => {
 builder.Services.AddAutoMapper(config => {
     config.CreateMap<User, GetUserDTO>();
     config.CreateMap<CreateUserDTO, User>();
-    config.CreateMap<Chat, ChatDTO>();
-    config.CreateMap<ChatDTO, Chat>();
-    config.CreateMap<Message, MessageDTO>();
-    config.CreateMap<MessageDTO, Message>();
+    // config.CreateMap<Chat, ChatDTO>();
+    // config.CreateMap<ChatDTO, Chat>();
+    // config.CreateMap<Message, MessageDTO>();
+    // config.CreateMap<MessageDTO, Message>();
 });
 
 builder.Services
@@ -46,6 +46,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
 
 app.UseAuthorization();
 
