@@ -2,6 +2,7 @@ using AutoMapper;
 using backend.DTO.UserControllerDTO;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -56,20 +57,22 @@ public class UsersController : ControllerBase
 
     [HttpPost("")]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status406NotAcceptable)]
     public async Task<IActionResult> CreateAsync([FromForm] CreateUserDTO userDTO, CancellationToken cancellationToken)
     {
-        Guid avatarGuid;
         int? avatarId = null;
         if(userDTO.AvatarFile is not null)
         {
-            avatarGuid = await AddAvatarAsync(userDTO.AvatarFile, cancellationToken);
-            var avatar = _appDbContext.Avatars
-                        .Where(av => av.FileGuid == avatarGuid)
-                        .First();
-            avatarId = avatar.Id;
+            //Def not the best way to handle it, but can't extract content-type header as we're getting the form data
+            //and I'm not sure if using FileExtensionContentTypeProvider is beneficial in this case
+            if(userDTO.AvatarFile.ContentType != "image/bmp" || 
+            userDTO.AvatarFile.ContentType != "image/jpeg" ||
+            userDTO.AvatarFile.ContentType != "image/png")
+            {
+                return BadRequest("Invalid image format, only bmp, jpg and png are supported.");
+            }
+            avatarId = await AddAvatarAsync(userDTO.AvatarFile, cancellationToken);
         }
-
-        
         var contact = _mapper.Map<CreateUserDTO, User>(userDTO);
         contact.AvatarId = avatarId;
 
@@ -78,8 +81,8 @@ public class UsersController : ControllerBase
         
         return Ok(createdUser.Entity.Id);
     }
-    //Not sure where this method should be
-    private async Task<Guid> AddAvatarAsync(IFormFile avatarFile, CancellationToken cancellationToken)
+
+    private async Task<int> AddAvatarAsync(IFormFile avatarFile, CancellationToken cancellationToken)
     {
         Guid avatarGuid = new Guid();
         var avatarEntity = await _appDbContext.Avatars.AddAsync(new Avatar
@@ -98,6 +101,6 @@ public class UsersController : ControllerBase
         }
         await _appDbContext.SaveChangesAsync(cancellationToken);
 
-        return avatarEntity.Entity.FileGuid;
+        return avatarEntity.Entity.Id;
     }
 }
