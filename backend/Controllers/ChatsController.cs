@@ -39,12 +39,20 @@ public class ChatsController : ControllerBase
         {
             return NotFound(id);
         }
-
+        User chatParticipant;
+        if (chat.User1Id == _currentUserId)
+        {
+            chatParticipant = chat.User2;
+        }
+        else
+        {
+            chatParticipant = chat.User1;
+        }
         var lastMessageInChat = await _chatDbContext.Messages.Where(x => x.ChatId == id).LastOrDefaultAsync(cancellationToken);
         GetChatDTO chatDTO = new GetChatDTO
         {
             Id = chat.Id,
-            ChatParticipant = _mapper.Map<User, GetUserDTO>(chat.User1),
+            ChatParticipant = _mapper.Map<User, GetUserDTO>(chatParticipant),
             LastMessage = _mapper.Map<Message, MessageDTO>(lastMessageInChat),
         };
 
