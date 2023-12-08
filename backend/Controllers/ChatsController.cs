@@ -40,6 +40,10 @@ public class ChatsController : ControllerBase
             return NotFound(id);
         }
         User chatParticipant;
+        if (Request.Cookies.ContainsKey("currentUserId"))
+        {
+            var _currentUserId = Request.Cookies("currentUserId");
+        }
         if (chat.User1Id == _currentUserId)
         {
             chatParticipant = chat.User2;
