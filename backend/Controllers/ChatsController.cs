@@ -42,16 +42,19 @@ public class ChatsController : ControllerBase
         User chatParticipant;
         if (Request.Cookies.ContainsKey("currentUserId"))
         {
-            var _currentUserId = Request.Cookies("currentUserId");
+            var _currentUserId = Request.Cookies["currentUserId"];
         }
+
+
         if (chat.User1Id == _currentUserId)
-        {
-            chatParticipant = chat.User2;
-        }
-        else
         {
             chatParticipant = chat.User1;
         }
+        else
+        {
+            chatParticipant = chat.User2;
+        }
+
         var lastMessageInChat = await _chatDbContext.Messages.Where(x => x.ChatId == id).LastOrDefaultAsync(cancellationToken);
         GetChatDTO chatDTO = new GetChatDTO
         {
