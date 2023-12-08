@@ -23,8 +23,8 @@ builder.Services.AddDbContext<ChatDbContext>((services, options) => {
 
 #if DEEP_DEBUG
 builder.Services.AddAutoMapper(config => {
-    // config.CreateMap<User, GetUserDTO>();
-    // config.CreateMap<CreateUserDTO, User>();
+    config.CreateMap<User, GetUserDTO>();
+    config.CreateMap<CreateUserDTO, User>();
     // config.CreateMap<Chat, ChatDTO>();
     // config.CreateMap<ChatDTO, Chat>();
     // config.CreateMap<Message, MessageDTO>();
