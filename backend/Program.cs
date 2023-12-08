@@ -1,3 +1,5 @@
+#define DEEP_DEBUG
+
 using AutoMapper;
 using backend;
 using backend.DTO.UserControllerDTO;
@@ -19,6 +21,7 @@ builder.Services.AddDbContext<ChatDbContext>((services, options) => {
     options.UseNpgsql(connectionString);
 });
 
+#if DEEP_DEBUG
 builder.Services.AddAutoMapper(config => {
     config.CreateMap<User, GetUserDTO>();
     config.CreateMap<CreateUserDTO, User>();
@@ -27,6 +30,7 @@ builder.Services.AddAutoMapper(config => {
     // config.CreateMap<Message, MessageDTO>();
     // config.CreateMap<MessageDTO, Message>();
 });
+#endif
 
 builder.Services
     .AddHealthChecks()
