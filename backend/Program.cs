@@ -5,6 +5,7 @@ using backend;
 using backend.DTO.UserControllerDTO;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
+using backend.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<ChatDbContext>((services, options) => {
     var configuration = services.GetRequiredService<IConfiguration>();
@@ -56,5 +58,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHealthChecks("/health_check");
+app.MapHub<ChatHub>("/chat");
 
 app.Run();
