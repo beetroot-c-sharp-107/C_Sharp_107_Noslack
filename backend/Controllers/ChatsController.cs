@@ -40,14 +40,11 @@ public class ChatsController : ControllerBase
             return NotFound(id);
         }
         User chatParticipant;
+        int _currentUserId = Request.Cookies["currentUserId"];
         if (Request.Cookies.ContainsKey("currentUserId"))
         {
-            var _currentUserId = Request.Cookies["currentUserId"];
-            chatParticipant = chat.UserId2 == _currentUserId ? chat.UserId2 : chat.UserId1;
-        }
-        else
-        {
-            chatParticipant = chat.UserId1;
+            int participantId = chat.UserId2 == _currentUserId ? chat.UserId2 : chat.UserId1;
+            chatParticipant = await _chatDbContext.Users.FindAsync(participantId, cancellationToken);
         }
 
         var lastMessageInChat = await _chatDbContext.Messages.Where(x => x.ChatId == id).LastOrDefaultAsync(cancellationToken);
