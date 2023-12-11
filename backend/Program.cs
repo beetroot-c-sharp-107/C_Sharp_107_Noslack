@@ -2,6 +2,7 @@
 
 using AutoMapper;
 using backend;
+using backend.DTO.ChatControllerDTO;
 using backend.DTO.UserControllerDTO;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
@@ -25,10 +26,10 @@ builder.Services.AddDbContext<ChatDbContext>((services, options) => {
 builder.Services.AddAutoMapper(config => {
     config.CreateMap<User, GetUserDTO>();
     config.CreateMap<CreateUserDTO, User>();
-    // config.CreateMap<Chat, ChatDTO>();
-    // config.CreateMap<ChatDTO, Chat>();
-    // config.CreateMap<Message, MessageDTO>();
-    // config.CreateMap<MessageDTO, Message>();
+    config.CreateMap<Chat, GetChatDTO>();
+    config.CreateMap<CreateChatDTO, Chat>();
+    config.CreateMap<Message, MessageDTO>();
+    config.CreateMap<MessageDTO, Message>();
 });
 #endif
 
