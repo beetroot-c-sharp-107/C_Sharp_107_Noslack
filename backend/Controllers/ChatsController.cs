@@ -51,13 +51,13 @@ public class ChatsController : ControllerBase
         var chat = await _chatDbContext.Chats.FindAsync(id, cancellationToken);
         if (chat is null)
         {
-            _logger.LogInformation($"Chat with id {id} not found")
+            _logger.LogInformation($"Chat with id {id} not found");
             return NotFound(id);
         }
 
         if (chat.UserId1 != currentUserId && chat.UserId2 != currentUserId)
         {
-            _logger.LogWarning($"User with id {currentUserId} isn't participant of the chat with id{id}")
+            _logger.LogWarning($"User with id {currentUserId} isn't participant of the chat with id{id}");
             return Forbid();
         }
 
@@ -85,7 +85,7 @@ public class ChatsController : ControllerBase
         var chat = await _chatDbContext.Chats.FindAsync(id, cancellationToken);
         if (chat is null)
         {
-            _logger.LogInformation($"Chat with id {id} not found")
+            _logger.LogInformation($"Chat with id {id} not found");
             return NotFound(id);
         }
 
@@ -100,6 +100,5 @@ public class ChatsController : ControllerBase
 
         _logger.LogInformation($"Got {messages.Count} messages for chat with id: {id}");
         return Ok(messages);
-    }
     }
 }
