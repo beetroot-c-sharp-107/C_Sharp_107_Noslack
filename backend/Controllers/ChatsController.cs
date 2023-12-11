@@ -55,7 +55,7 @@ public class ChatsController : ControllerBase
             return Forbid();
         }
 
-        int participantId = chat.UserId2 == currentUserId ? chat.UserId2 : chat.UserId1;
+        int OtherParticipantId = chat.UserId2 == currentUserId ? chat.UserId1 : chat.UserId2;
         User chatParticipant = await _chatDbContext.Users.FindAsync(participantId, cancellationToken);
 
         var lastMessageInChat = await _chatDbContext.Messages.Where(x => x.ChatId == id).LastOrDefaultAsync(cancellationToken);
