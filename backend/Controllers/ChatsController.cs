@@ -56,7 +56,7 @@ public class ChatsController : ControllerBase
         }
 
         int OtherParticipantId = chat.UserId2 == currentUserId ? chat.UserId1 : chat.UserId2;
-        User chatParticipant = await _chatDbContext.Users.FindAsync(participantId, cancellationToken);
+        User chatParticipant = await _chatDbContext.Users.FindAsync(OtherParticipantId, cancellationToken);
 
         var lastMessageInChat = await _chatDbContext.Messages.Where(x => x.ChatId == id).LastOrDefaultAsync(cancellationToken);
         GetChatDTO chatDTO = new GetChatDTO
