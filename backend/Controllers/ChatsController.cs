@@ -66,7 +66,7 @@ public class ChatsController : ControllerBase
             LastMessage = _mapper.Map<Message, MessageDTO>(lastMessageInChat),
         };
 
-        return Ok(_mapper.Map<Chat, GetChatDTO>(chat));
+        return Ok(chatDTO);
     }
 
     [HttpGet("{id}/messages")]
