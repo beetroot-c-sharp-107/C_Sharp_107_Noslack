@@ -34,18 +34,29 @@ public class ChatsController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ChatById([FromRoute] int id, CancellationToken cancellationToken)
     {
+        if (!Request.Cookies.ContainsKey("currentUserId"))
+        {
+            return BadRequest("currentUserId not present in the cookies collection.");
+        }
+
+        if (!int.TryParse(Request.Cookies["currentUserId"], out var currentUserId))
+        {
+            return BadRequest("currentUserId is present in the cookies collection, but has incorrect format.");
+        }
+
         var chat = await _chatDbContext.Chats.FindAsync(id, cancellationToken);
         if (chat is null)
         {
             return NotFound(id);
         }
-        User chatParticipant;
-        int _currentUserId = Request.Cookies["currentUserId"];
-        if (Request.Cookies.ContainsKey("currentUserId"))
+
+        if (chat.UserId1 != currentUserId && chat.UserId2 != currentUserId)
         {
-            int participantId = chat.UserId2 == _currentUserId ? chat.UserId2 : chat.UserId1;
-            chatParticipant = await _chatDbContext.Users.FindAsync(participantId, cancellationToken);
+            return Forbid();
         }
+
+        int participantId = chat.UserId2 == currentUserId ? chat.UserId2 : chat.UserId1;
+        User chatParticipant = await _chatDbContext.Users.FindAsync(participantId, cancellationToken);
 
         var lastMessageInChat = await _chatDbContext.Messages.Where(x => x.ChatId == id).LastOrDefaultAsync(cancellationToken);
         GetChatDTO chatDTO = new GetChatDTO
