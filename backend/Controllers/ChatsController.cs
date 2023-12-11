@@ -87,21 +87,34 @@ public class ChatsController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMessagesByChatId([FromRoute] int id, [FromQuery] int start = 0, [FromQuery] int count = 10, CancellationToken cancellationToken = default)
     {
-        var chat = await _chatDbContext.Chats.FindAsync(id, cancellationToken);
-        if (chat is null)
+        try
         {
-            return NotFound(id);
+            _logger.LogInformation($"Request to get messages for chat with id {id}");
+
+            var chat = await _chatDbContext.Chats.FindAsync(id, cancellationToken);
+            if (chat is null)
+            {
+                _logger.LogInformation($"Chat with id {id} not found")
+                return NotFound(id);
+            }
+
+            _logger.LogInformation($"Getting messages for chat with id: {id}, start: {start}, count: {count}");
+            var messages = (await _chatDbContext.Messages
+                .Where(x => x.ChatId == id)
+                .Skip(start)
+                .Take(count)
+                .ToListAsync(cancellationToken))
+                .Select(_mapper.Map<Message, MessageDTO>)
+                .ToList();
+
+            _logger.LogInformation($"Got {messages.Count} messages for chat with id: {id}");
+            return Ok(messages);
         }
-        
 
-        var messages = (await _chatDbContext.Messages
-            .Where(x => x.ChatId == id)
-            .Skip(start)
-            .Take(count)
-            .ToListAsync(cancellationToken))
-            .Select(_mapper.Map<Message, MessageDTO>)
-            .ToList();
-
-        return Ok(messages);
+        catch(Exception ex) { }
+        {
+            _logger.LogError(ex, $"Error occurred while getting messages for chat with id: {id}");
+            return StatusCode(500);
+        }
     }
 }
