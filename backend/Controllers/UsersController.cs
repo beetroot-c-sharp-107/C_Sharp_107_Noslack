@@ -34,6 +34,8 @@ public class UsersController : ControllerBase
         .Take(count)
         .ToListAsync(cancellationToken);
 
+        _logger.LogInformation("User request completed successfully");
+
         return Ok(all
             .Select(
                 c => _mapper.Map<User, GetUserDTO>(c)
@@ -50,8 +52,10 @@ public class UsersController : ControllerBase
         var contact = await _appDbContext.Users.FindAsync(id, cancellationToken);
         if(contact is null)
         {
+            _logger.LogInformation($"User with ID {id} is not found.");
             return NotFound(id);
         }
+        _logger.LogInformation($"User with ID {id} successfully found.");
         return Ok(_mapper.Map<User, GetUserDTO>(contact));
     }
 
@@ -65,26 +69,38 @@ public class UsersController : ControllerBase
         {
             //Def not the best way to handle it, but can't extract content-type header as we're getting the form data
             //and I'm not sure if using FileExtensionContentTypeProvider is beneficial in this case
-            if(userDTO.AvatarFile.ContentType != "image/bmp" || 
+            if(userDTO.AvatarFile.ContentType != "image/bmp" ||
             userDTO.AvatarFile.ContentType != "image/jpeg" ||
             userDTO.AvatarFile.ContentType != "image/png")
             {
+                _logger.LogError("Incorrect image format");
                 return BadRequest("Invalid image format, only bmp, jpg and png are supported.");
             }
             avatarId = await AddAvatarAsync(userDTO.AvatarFile, cancellationToken);
+
+            if (avatarId == null)
+            {
+
+                _logger.LogError("Error adding an avatar.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Server error");
+            }
         }
         var contact = _mapper.Map<CreateUserDTO, User>(userDTO);
         contact.AvatarId = avatarId;
 
         var createdUser = await _appDbContext.Users.AddAsync(contact);
         await _appDbContext.SaveChangesAsync(cancellationToken);
-        
+
+        _logger.LogInformation("Changes saved successfully");
+
         return Ok(createdUser.Entity.Id);
     }
 
     private async Task<int> AddAvatarAsync(IFormFile avatarFile, CancellationToken cancellationToken)
     {
         Guid avatarGuid = new Guid();
+
+        _logger.LogInformation($"Created a new GUID for the avatar: {avatarGuid}");
         var avatarEntity = await _appDbContext.Avatars.AddAsync(new Avatar
         {
             FileGuid = avatarGuid
@@ -101,6 +117,7 @@ public class UsersController : ControllerBase
         }
         await _appDbContext.SaveChangesAsync(cancellationToken);
 
+        _logger.LogInformation("Changes saved successfully!");
         return avatarEntity.Entity.Id;
     }
 }
