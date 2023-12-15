@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace backend.Hubs;
     public class ChatHub : Hub
     {
-        public async Task SendMessage(int fromUserId, int toUserId, string message, HttpContextAccessor httpContextAccessor, ChatDbContext dbContext, CancellationToken cancellationToken = default)
+        public async Task SendMessage(int fromUserId, int toUserId, string message, IHttpContextAccessor httpContextAccessor, ChatDbContext dbContext, CancellationToken cancellationToken = default)
         {
             var chat = await dbContext.Chats
             .Where(x => (fromUserId == x.UserId1 || fromUserId == x.UserId2) && (toUserId == x.UserId1 || toUserId == x.UserId2))
